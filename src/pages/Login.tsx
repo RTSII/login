@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { signIn } = useAuth()
+  const { signIn, resetPassword } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,11 +21,36 @@ const Login = () => {
 
     try {
       await signIn(email, password)
-      navigate('/dashboard')
+      setSuccessMessage('Login successful! Redirecting...')
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 1000)
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in')
+      console.error('Login error:', err)
+      if (err.message.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please check your credentials and try again.')
+      } else if (err.message.includes('Email not confirmed')) {
+        setError('Please check your email and click the confirmation link before signing in.')
+      } else {
+        setError(err.message || 'Failed to sign in. Please try again.')
+      }
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address first')
+      return
+    }
+
+    try {
+      await resetPassword(email)
+      setSuccessMessage('Password reset email sent! Check your inbox.')
+      setError('')
+    } catch (err: any) {
+      setError(err.message || 'Failed to send reset email')
     }
   }
 
@@ -34,10 +60,10 @@ const Login = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/aerial_view.jpg')`,
+          backgroundImage: `url('/assets/images/aerial_view.jpg')`,
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-teal-700/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/65 via-blue-800/55 to-teal-700/65"></div>
       </div>
 
       {/* Floating elements for visual interest */}
@@ -126,9 +152,23 @@ const Login = () => {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-red-500/20 border border-red-400/50 rounded-xl p-4 backdrop-blur-sm"
+                  className="bg-red-500/20 border border-red-400/50 rounded-xl p-4 backdrop-blur-sm flex items-start space-x-3"
                 >
+                  <AlertCircle className="h-5 w-5 text-red-300 flex-shrink-0 mt-0.5" />
                   <p className="text-red-100 text-sm font-medium">{error}</p>
+                </motion.div>
+              )}
+
+              {successMessage && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-500/20 border border-green-400/50 rounded-xl p-4 backdrop-blur-sm flex items-start space-x-3"
+                >
+                  <div className="h-5 w-5 bg-green-400 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center">
+                    <div className="h-2 w-2 bg-white rounded-full"></div>
+                  </div>
+                  <p className="text-green-100 text-sm font-medium">{successMessage}</p>
                 </motion.div>
               )}
 
@@ -213,35 +253,27 @@ const Login = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8, duration: 0.6 }}
             >
-             <div className="mt-8 space-y-4">
-               <div className="text-center">
-                 <Link
-                   to="/forgot-password"
-                   className="text-teal-300 hover:text-teal-200 text-sm font-medium transition-colors duration-200"
-                 >
-                   Forgot your password?
-                 </Link>
-               </div>
-               
-               <div className="relative">
-                 <div className="absolute inset-0 flex items-center">
-                   <div className="w-full border-t border-white/20"></div>
-                 </div>
-                 <div className="relative flex justify-center text-sm">
-                   <span className="px-4 bg-transparent text-white/60">New to Sandpiper Run?</span>
-                 </div>
-               </div>
-
-               <div className="text-center">
-                 <Link
-                   to="/register"
-                   className="inline-flex items-center space-x-2 text-white hover:text-teal-300 font-medium transition-colors duration-200 group"
-                 >
-                   <span>Create an account</span>
-                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-                 </Link>
-               </div>
-             </div>
+              <div className="mt-8 space-y-4">
+                <div className="text-center">
+                  <button
+                    onClick={handleForgotPassword}
+                    disabled={loading}
+                    className="text-teal-300 hover:text-teal-200 text-sm font-medium transition-colors duration-200"
+                  >
+                    Forgot your password?
+                  </button>
+                </div>
+                
+                <div className="text-center">
+                  <Link
+                    to="/invite-request"
+                    className="inline-flex items-center space-x-2 text-white hover:text-teal-300 font-medium transition-colors duration-200 group"
+                  >
+                    <span>New to Sandpiper Run?</span>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  </Link>
+                </div>
+              </div>
            </motion.div>
           </div>
 
@@ -251,11 +283,11 @@ const Login = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.8 }}
           >
-           <div className="mt-8 text-center">
-             <p className="text-white/60 text-sm">
-               © 2024 Sandpiper Run Community
-             </p>
-           </div>
+            <div className="mt-8 text-center">
+              <p className="text-white/60 text-sm">
+                © 2025 PM-Shift Pool Guy
+              </p>
+            </div>
          </motion.div>
         </motion.div>
       </div>
