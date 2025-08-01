@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+
+type User = {
+  id: string
+  email: string
+}
 
 type Profile = {
   id: string
@@ -33,6 +37,7 @@ type AuthContextType = {
   }) => Promise<void>
   signOut: () => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<void>
+  resetPassword: (email: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -110,45 +115,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       showUnit: boolean
     }
   ) => {
-    // First, create the auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
-    if (authError) throw authError
-    if (!authData.user) throw new Error('Failed to create user')
-
-    // If no session (email confirmation required), sign in the user manually
-    if (!authData.session) {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (signInError) throw signInError
-    }
-
-    // Then create the profile
-    const { error: profileError } = await supabase
-      .from('owner_profiles')
-      .insert({
-        user_id: authData.user.id,
-        unit_number: profileData.unitNumber,
-        first_name: profileData.firstName,
-        last_name: profileData.lastName,
-        email: email,
-        phone: profileData.phone,
-        directory_opt_in: profileData.directoryOptIn,
-        show_email: profileData.showEmail,
-        show_phone: profileData.showPhone,
-        show_unit: profileData.showUnit,
-      })
-
-    if (profileError) {
-      // If profile creation fails, we should clean up the auth user
-      await supabase.auth.signOut()
-      throw profileError
-    }
+    // Mock signup for preview
+    console.log('Sign up with:', { email, profileData })
   }
 
   const signOut = async () => {
@@ -170,6 +138,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setProfile(data)
   }
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email)
+    if (error) throw error
+  }
+
   const value = {
     user,
     profile,
@@ -178,6 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signOut,
     updateProfile,
+    resetPassword,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
