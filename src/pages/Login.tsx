@@ -88,12 +88,13 @@ const Login = () => {
               >
                 <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/30 flex items-center justify-center backdrop-blur-sm">
                   <img
-                    src="/spr_logo.jpg"
-                    alt="Sandpiper Run"
+                    src="/bird.jpeg"
+                    alt="Bird Logo"
                     className="w-16 h-16 rounded-full object-cover shadow-lg"
                   />
                 </div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-teal-400/20 to-blue-400/20 rounded-full blur-lg -z-10"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-fuchsia-500/30 to-blue-500/30 rounded-full blur-lg -z-10"></div>
+                <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 to-cyan-400/20 rounded-full blur-xl -z-20"></div>
               </motion.div>
               
               <motion.h1
