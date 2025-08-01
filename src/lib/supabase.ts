@@ -12,6 +12,10 @@ export const supabase = {
     },
     signUp: () => Promise.resolve({ data: { user: null }, error: null }),
     signOut: () => Promise.resolve({ error: null }),
+    resetPasswordForEmail: (email: string) => {
+      console.log('Password reset requested for:', email);
+      return Promise.resolve({ error: null });
+    },
   },
   from: () => ({
     select: () => ({
