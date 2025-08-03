@@ -229,7 +229,7 @@ const Login = () => {
                    <div className="w-full border-t border-white/20"></div>
                  </div>
                  <div className="relative flex justify-center text-sm">
-                   <span className="px-4 bg-transparent text-white/60">New to Sandpiper Run?</span>
+                   <span className="px-4 bg-transparent text-white/60">Need access to Sandpiper Run?</span>
                  </div>
                </div>
 
@@ -238,7 +238,7 @@ const Login = () => {
                    to="/register"
                    className="inline-flex items-center space-x-2 text-white hover:text-teal-300 font-medium transition-colors duration-200 group"
                  >
-                   <span>Create an account</span>
+                   <span>Request an Invite</span>
                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
                  </Link>
                </div>
@@ -254,7 +254,7 @@ const Login = () => {
           >
            <div className="mt-8 text-center">
              <p className="text-white/60 text-sm">
-               © 2024 Sandpiper Run Community
+               © 2025 PM Pool Guy
              </p>
            </div>
          </motion.div>
