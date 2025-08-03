@@ -89,12 +89,14 @@ const Login = () => {
                 {/* Outer blue circle */}
                 <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-white/30 flex items-center justify-center backdrop-blur-sm shadow-lg">
                   {/* Inner fuchsia/purple circle */}
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-fuchsia-400 to-purple-500 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-fuchsia-400 to-purple-500 flex items-center justify-center relative">
                     <img
                       src="/bird.jpeg"
                       alt="Bird Logo"
-                      className="w-12 h-12 rounded-full object-cover shadow-md"
+                      className="w-12 h-12 rounded-full object-cover shadow-md relative z-10"
                     />
+                    {/* Fuchsia/purple background fill for transparent areas */}
+                    <div className="absolute inset-0 w-12 h-12 mx-auto my-auto rounded-full bg-gradient-to-br from-fuchsia-400 to-purple-500 -z-10"></div>
                   </div>
                 </div>
                 <div className="absolute -inset-2 bg-gradient-to-r from-fuchsia-500/30 to-blue-500/30 rounded-full blur-lg -z-10"></div>
