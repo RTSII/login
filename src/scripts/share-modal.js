@@ -6,17 +6,19 @@ if (document.readyState === 'loading') {
 }
 
 function initShareModal() {
+  // Check if elements exist before trying to access them
   const shareButton = document.getElementById('shareButton');
   const shareModal = document.getElementById('shareModal');
   const closeModal = document.getElementById('closeModal');
   const copyLinkButton = document.getElementById('copyLinkButton');
 
-  // Check if elements exist before adding event listeners
-  if (!shareButton || !shareModal || !closeModal || !copyLinkButton) {
+  // Only proceed if all required elements exist
+  if (!shareButton || !shareModal || !closeModal) {
     console.log('Share modal elements not found, skipping initialization');
     return;
   }
 
+  // Add event listeners only if elements exist
   shareButton.addEventListener('click', function() {
     shareModal.style.display = 'block';
   });
@@ -25,16 +27,36 @@ function initShareModal() {
     shareModal.style.display = 'none';
   });
 
+  // Close modal when clicking outside
   window.addEventListener('click', function(event) {
     if (event.target === shareModal) {
       shareModal.style.display = 'none';
     }
   });
 
+  // Copy link functionality (optional element)
   if (copyLinkButton) {
     copyLinkButton.addEventListener('click', function() {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+          alert('Link copied to clipboard!');
+        }).catch(function(err) {
+          console.error('Failed to copy link: ', err);
+        });
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = window.location.href;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          alert('Link copied to clipboard!');
+        } catch (err) {
+          console.error('Failed to copy link: ', err);
+        }
+        document.body.removeChild(textArea);
+      }
     });
   }
 }
